@@ -11,11 +11,39 @@ datasource db {
 }
 
 model User{
-  userid        String   @id @default(auto()) @map("_id") @db.ObjectId
-  username      String   @unique 
-  fullname      String?
-  email         String?  @unique
-  wallet        String
-  password      String
-  picture       String?
+  userid          String      @id @default(auto()) @map("_id") @db.ObjectId
+  username        String      @unique 
+  fullname        String?
+  email           String?     @unique
+  phone           Int?
+  wallet          String
+  password        String      
+  picture         String?     
+  gamescreated    Bet[]       
+  gameswon        Int         @default(0)
+  gameslost       Int         @default(0)
+  deposits        Deposit[]
+}
+
+model Deposit{
+  txref          String     @id @map("_id")   
+  owner          User       @relation(fields: [ownerid], references: [userid])
+  ownerid        String     @db.ObjectId
+  amount         String
+  status         String
+}
+
+model Bet{
+  gameid        String      @id @default(auto()) @map("_id") @db.ObjectId
+  creator       User        @relation(fields: [creatorid], references: [userid])
+  creatorid     String      @db.ObjectId
+}
+
+model EmailVerification{
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  userid        String          @db.ObjectId
+  email         String          
+  state         String          
+  timesent      DateTime        @default(now())
+  code          String
 }

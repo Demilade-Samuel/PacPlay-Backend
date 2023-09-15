@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  userid          String              @id @default(auto()) @map("_id") @db.ObjectId
+  username        String              @unique 
+  fullname        String?
+  email           String?             @unique
+  phone           Int?
+  profilepic      String?
+  wallet          String
+  password        String      
+  picture         String?
+  gamescreated    Game[]              @relation("Games created")  
+  gameswon        Int                 @default(0)
+  gameslost       Int                 @default(0)
+  gameidsplayed   String[]            @db.ObjectId
+  gamesplayed     Game[]              @relation("Games played", fields: [gameidsplayed], references: [gameid])    
+  deposits        Deposit[]
+  withdrawals     Withdrawal[]
+  notifications   Notification[]
+}
+
+model Deposit{
+  txref          String           @id @map("_id")   
+  owner          User             @relation(fields: [ownerid], references: [userid])
+  ownerid        String           @db.ObjectId
+  amount         String
+  status         String
+  timesent       DateTime?        @default(now())
+}
+
+model Withdrawal{
+  txref          String           @id @map("_id")   
+  owner          User             @relation(fields: [ownerid], references: [userid])
+  ownerid        String           @db.ObjectId
+  amount         String
+  status         String
+  timesent       DateTime?        @default(now())
+}
+
+model Game{
+  gameid              String      @id @default(auto()) @map("_id") @db.ObjectId
+  gametitle           String
+  gamedesc            String
+  status              String
+  stake               String
+  bettype             String      //h2h or admin
+  wagersidlist        String[]    @db.ObjectId
+  wagerschoices       String[]
+  stakerslist         User[]      @relation("Games played", fields: [wagersidlist], references: [userid])
+  availablewagers     String[]
+  history             String[]
+  votes               String[]
+  agreement           Boolean[]   @default([false, false])
+  admindecision       String?
+  creator             User        @relation("Games created", fields: [creatorid], references: [userid])
+  creatorid           String      @db.ObjectId
+}
+
+model EmailVerification{
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  userid        String          @db.ObjectId
+  email         String          
+  state         String          
+  timesent      DateTime        @default(now())
+  code          String
+}
+
+model Notification{
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  receiverid        String          @db.ObjectId
+  receiver          User            @relation(fields: [receiverid], references: [userid])
+  message           String 
+  type              String       
+  link              String?  
+  time              DateTime        @default(now())
+}

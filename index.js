@@ -1843,11 +1843,11 @@ app.post('/admindecision', bodyParser.json(), async (req, res) => {
 
 //650156a9aeb0fe67d5f73bc3
 
-app.listen(3000, ()=>{
+app.listen(process.env.APP_PORT, ()=>{
     console.log('Listening on port 3000...');
 });
 
-HTTP.listen(4000, ()=>{
+HTTP.listen(process.env.HTTP_PORT, ()=>{
     console.log('HTTP Listening on port 4000...');
 });
 

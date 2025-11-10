@@ -1,2 +1,2 @@
 # PacPlay-Backend
-Esports betting
+Esports
